@@ -1,22 +1,24 @@
 package com.rrtyui.weatherapplication.entity;
 
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalTime;
 import java.util.UUID;
 
 @Data
-@Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
 @Table(name = "sessions")
 public class Session {
 
     @Id
     private UUID id;
-    private Long userId;
+
+    @OneToOne
+    private User userId;
+
+    @Column(name = "expires_at")
     private LocalTime expiresAt;
 }

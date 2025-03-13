@@ -2,6 +2,8 @@ package com.rrtyui.weatherapplication.controller;
 
 import com.rrtyui.weatherapplication.entity.User;
 import com.rrtyui.weatherapplication.repository.UserRepository;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -29,10 +31,19 @@ public class AuthController {
 
     @PostMapping("/sign-up")
     public String signIn(@ModelAttribute("user") @Valid User user,
-                         BindingResult bindingResult) {
+                         BindingResult bindingResult, HttpServletResponse httpServletResponse) {
         if (bindingResult.hasErrors()) {
             return "sign-in";
         }
+
+        Long userId = 2L;
+        Cookie cookie = new Cookie("userId", userId.toString());
+        httpServletResponse.addCookie(cookie);
+        cookie.setPath("/");
+        /**
+         * Может в куки добавлять юзер айди и его сессию
+         * или юзер айди и айди и также созданную сессию
+          */
 
         userRepository.add(user);
         return "redirect:index";

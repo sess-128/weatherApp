@@ -1,11 +1,15 @@
 package com.rrtyui.weatherapplication.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "users")
 public class User {
@@ -19,4 +23,5 @@ public class User {
 
     @Column(name = "password")
     private String password;
+
 }

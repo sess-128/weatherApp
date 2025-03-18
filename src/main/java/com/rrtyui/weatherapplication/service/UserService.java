@@ -1,39 +1,34 @@
 package com.rrtyui.weatherapplication.service;
 
+import com.rrtyui.weatherapplication.dao.UserDao;
 import com.rrtyui.weatherapplication.entity.User;
-import com.rrtyui.weatherapplication.repository.UserTestRepository;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-
 @Service
 public class UserService {
-    private final UserTestRepository userTestRepository;
+    private final UserDao userDao;
 
     @Autowired
-    public UserService(UserTestRepository userTestRepository) {
-        this.userTestRepository = userTestRepository;
+    public UserService(UserDao userDao) {
+        this.userDao = userDao;
     }
 
-    public List<User> getAllEntities() {
-        return userTestRepository.findAll();
+    public User add(User user) {
+
+        String hash = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt());
+        user.setPassword(hash);
+
+        userDao.save(user);
+
+        return user;
     }
 
-    public Optional<User> getEntityById(Long id) {
-        return userTestRepository.findById(id);
+    public User findByLogin(User user) {
+        return userDao.findByLogin(user).orElseThrow();
     }
 
-    public User saveEntity(User entity) {
-        return userTestRepository.save(entity);
-    }
+    
 
-    public void deleteEntity(Long id) {
-        userTestRepository.deleteById(id);
-    }
-
-    public Optional<User> getEntityByIdName(User entity) {
-        return userTestRepository.findByName(entity.getLogin());
-    }
 }

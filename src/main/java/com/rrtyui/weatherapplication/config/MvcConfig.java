@@ -1,7 +1,9 @@
 package com.rrtyui.weatherapplication.config;
 
+import jakarta.servlet.Filter;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
+import org.springframework.web.filter.DelegatingFilterProxy;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.support.AbstractAnnotationConfigDispatcherServletInitializer;
 
@@ -30,5 +32,10 @@ public class MvcConfig extends AbstractAnnotationConfigDispatcherServletInitiali
     private void registerHiddenFieldFilter(ServletContext aContext) {
         aContext.addFilter("hiddenHttpMethodFilter",
                 new HiddenHttpMethodFilter()).addMappingForUrlPatterns(null, true, "/*");
+    }
+
+    @Override
+    protected Filter[] getServletFilters() {
+        return new Filter[]{new DelegatingFilterProxy("authFilter")};
     }
 }

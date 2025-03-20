@@ -20,11 +20,9 @@ public class AuthFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-
         String requestURI = httpServletRequest.getRequestURI();
 
-
-        if (requestURI.equals("/sign-in") || requestURI.equals("/sign-up") || requestURI.startsWith("/static/")) {
+        if (requestURI.equals("/sign-in") || requestURI.equals("/sign-up")) {
             chain.doFilter(request, response);
             return;
         }
@@ -42,6 +40,7 @@ public class AuthFilter implements Filter {
                 }
             }
         }
+        sessionService.deleteOldSessions();
         httpServletResponse.sendRedirect("/sign-in");
     }
 }

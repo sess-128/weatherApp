@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 @RequestMapping("/sign-in")
 public class SignInController {
-
     private final UserService userService;
     private final SessionService sessionService;
     private final CookieService cookieService;

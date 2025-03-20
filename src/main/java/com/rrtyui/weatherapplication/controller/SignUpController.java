@@ -55,7 +55,6 @@ public class SignUpController {
 
         cookieService.add(session, httpServletResponse);
 
-
         model.addAttribute(user);
         return "redirect:/";
     }

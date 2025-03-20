@@ -7,7 +7,6 @@ import com.rrtyui.weatherapplication.service.SessionService;
 import com.rrtyui.weatherapplication.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -46,7 +45,6 @@ public class IndexController {
         Session byUUID = sessionService.findByUUID(sessionId);
         User user1 = byUUID.getUser();
 
-        userService.
         model.addAttribute("user", user1);
         return "index";
     }

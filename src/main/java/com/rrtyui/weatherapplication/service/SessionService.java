@@ -4,11 +4,14 @@ import com.rrtyui.weatherapplication.dao.SessionDao;
 import com.rrtyui.weatherapplication.entity.Session;
 import com.rrtyui.weatherapplication.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
 
 @Service
 public class SessionService {
@@ -42,12 +45,24 @@ public class SessionService {
         }
         Session session1 = session.get();
         LocalDateTime expiresAt = session1.getExpiresAt();
-        boolean isExpired = LocalDateTime.now().isAfter(expiresAt);
 
-        if (isExpired) {
+        if (isValidTimeEnded(expiresAt)) {
             sessionDao.delete(session1);
             return false;
         }
         return true;
+    }
+
+    public void deleteOldSessions() {
+        List<Session> sessions = sessionDao.findAll();
+        for (Session session : sessions) {
+            if (isValidTimeEnded(session.getExpiresAt())) {
+                sessionDao.delete(session);
+            }
+        }
+    }
+
+    private boolean isValidTimeEnded (LocalDateTime timeToCheck) {
+        return LocalDateTime.now().isAfter(timeToCheck);
     }
 }

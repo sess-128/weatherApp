@@ -5,6 +5,7 @@ import jakarta.transaction.Transactional;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -20,5 +21,11 @@ public class SessionDao extends BaseDao<Session>{
         org.hibernate.Session session = sessionFactory.getCurrentSession();
 
         return Optional.ofNullable(session.find(Session.class, UUID.fromString(id)));
+    }
+
+    @Transactional
+    public List<Session> findAll () {
+        org.hibernate.Session session = sessionFactory.getCurrentSession();
+        return session.createQuery("select s from Session s", Session.class).getResultList();
     }
 }

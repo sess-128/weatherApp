@@ -1,18 +1,18 @@
 package com.rrtyui.weatherapplication.controller;
 
-import com.rrtyui.weatherapplication.entity.Session;
+import com.rrtyui.weatherapplication.entity.CustomSession;
 import com.rrtyui.weatherapplication.entity.User;
 import com.rrtyui.weatherapplication.service.CookieService;
 import com.rrtyui.weatherapplication.service.SessionService;
 import com.rrtyui.weatherapplication.service.UserService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/")
@@ -30,22 +30,25 @@ public class IndexController {
     }
 
     @GetMapping
-    public String index(@ModelAttribute("user") User user , HttpServletRequest httpServletRequest,
+    public String index(HttpServletRequest httpServletRequest,
                         Model model) {
+        Optional<String> sessionIdInCookies = sessionService.findSessionIdInCookies(httpServletRequest);
 
-        String sessionId = "";
+        if (sessionIdInCookies.isPresent()) {
+            CustomSession customSession = sessionService.findByUUID(sessionIdInCookies.get());
+            User user = customSession.getUser();
 
-        Cookie[] cookies = httpServletRequest.getCookies();
-        for (Cookie cookie : cookies) {
-            if ("session_id".equals(cookie.getName())) {
-                sessionId = cookie.getValue();
-            }
+            model.addAttribute("user", user);
         }
-
-        Session byUUID = sessionService.findByUUID(sessionId);
-        User user1 = byUUID.getUser();
-
-        model.addAttribute("user", user1);
         return "index";
     }
+
+    @GetMapping("/logout")
+    public String logout() {
+        System.out.println("COOKIE DELETED");
+        cookieService.delete();
+        return "error";
+    }
+
+
 }

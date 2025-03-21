@@ -1,6 +1,6 @@
 package com.rrtyui.weatherapplication.controller;
 
-import com.rrtyui.weatherapplication.entity.Session;
+import com.rrtyui.weatherapplication.entity.CustomSession;
 import com.rrtyui.weatherapplication.entity.User;
 import com.rrtyui.weatherapplication.service.CookieService;
 import com.rrtyui.weatherapplication.service.SessionService;
@@ -51,9 +51,9 @@ public class SignUpController {
 
         User savedUser = userService.add(user);
 
-        Session session = sessionService.add(savedUser);
+        CustomSession customSession = sessionService.add(savedUser);
 
-        cookieService.add(session, httpServletResponse);
+        cookieService.add(customSession, httpServletResponse);
 
         model.addAttribute(user);
         return "redirect:/";

@@ -1,10 +1,11 @@
 package com.rrtyui.weatherapplication.service;
 
 import com.rrtyui.weatherapplication.dao.SessionDao;
-import com.rrtyui.weatherapplication.entity.Session;
+import com.rrtyui.weatherapplication.entity.CustomSession;
 import com.rrtyui.weatherapplication.entity.User;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -22,44 +23,56 @@ public class SessionService {
         this.sessionDao = sessionDao;
     }
 
-    public Session add(User user) {
-        Session session = Session.builder()
+    public CustomSession add(User user) {
+        CustomSession customSession = CustomSession.builder()
                 .id(UUID.randomUUID())
                 .user(user)
                 .expiresAt(LocalDateTime.now().plusHours(1))
                 .build();
 
-        return sessionDao.save(session);
+        return sessionDao.save(customSession);
     }
 
-    public Session findByUUID(String uuid) {
+    public CustomSession findByUUID(String uuid) {
 
         return sessionDao.findById(uuid).orElseThrow(IllegalArgumentException::new);
     }
 
     public boolean isSessionValid(String sessionId) {
-        Optional<Session> session = sessionDao.findById(sessionId);
+        Optional<CustomSession> session = sessionDao.findById(sessionId);
 
         if (session.isEmpty()) {
             return false;
         }
-        Session session1 = session.get();
-        LocalDateTime expiresAt = session1.getExpiresAt();
+        CustomSession customSession1 = session.get();
+        LocalDateTime expiresAt = customSession1.getExpiresAt();
 
         if (isValidTimeEnded(expiresAt)) {
-            sessionDao.delete(session1);
+            sessionDao.delete(customSession1);
             return false;
         }
         return true;
     }
 
     public void deleteOldSessions() {
-        List<Session> sessions = sessionDao.findAll();
-        for (Session session : sessions) {
-            if (isValidTimeEnded(session.getExpiresAt())) {
-                sessionDao.delete(session);
+        List<CustomSession> customSessions = sessionDao.findAll();
+        for (CustomSession customSession : customSessions) {
+            if (isValidTimeEnded(customSession.getExpiresAt())) {
+                sessionDao.delete(customSession);
             }
         }
+    }
+
+    public Optional<String> findSessionIdInCookies(HttpServletRequest httpServletRequest) {
+        String sessionId = "";
+
+        Cookie[] cookies = httpServletRequest.getCookies();
+        for (Cookie cookie : cookies) {
+            if ("session_id".equals(cookie.getName())) {
+                sessionId = cookie.getValue();
+            }
+        }
+        return Optional.ofNullable(sessionId);
     }
 
     private boolean isValidTimeEnded (LocalDateTime timeToCheck) {

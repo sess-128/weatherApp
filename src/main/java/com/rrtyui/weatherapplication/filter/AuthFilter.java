@@ -2,11 +2,11 @@ package com.rrtyui.weatherapplication.filter;
 
 import com.rrtyui.weatherapplication.service.SessionService;
 import jakarta.servlet.*;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.Optional;
 
 public class AuthFilter implements Filter {
 
@@ -26,18 +26,12 @@ public class AuthFilter implements Filter {
             chain.doFilter(request, response);
             return;
         }
+        Optional<String> sessionIdInCookies = sessionService.findSessionIdInCookies(httpServletRequest);
 
-        Cookie[] cookies = httpServletRequest.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if ("session_id".equals(cookie.getName())) {
-                    String sessionId = cookie.getValue();
-
-                    if (sessionService.isSessionValid(sessionId)) {
-                        chain.doFilter(request, response);
-                        return;
-                    }
-                }
+        if (sessionIdInCookies.isPresent()) {
+            if (sessionService.isSessionValid(sessionIdInCookies.get())) {
+                chain.doFilter(request, response);
+                return;
             }
         }
         sessionService.deleteOldSessions();

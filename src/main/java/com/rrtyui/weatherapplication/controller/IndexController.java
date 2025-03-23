@@ -32,15 +32,19 @@ public class IndexController {
     @GetMapping
     public String index(HttpServletRequest httpServletRequest,
                         Model model) {
-        Optional<String> sessionIdInCookies = sessionService.findSessionIdInCookies(httpServletRequest);
 
-        if (sessionIdInCookies.isPresent()) {
-            CustomSession customSession = sessionService.findByUUID(sessionIdInCookies.get());
-            User user = customSession.getUser();
+        String sessionId = httpServletRequest.getHeader("session_id");
 
+        if (sessionId != null) {
+            Optional<CustomSession> customSession = sessionService.findByUUID(sessionId);
+
+
+            User user = customSession.get().getUser();
             model.addAttribute("user", user);
+
+            return "index";
         }
-        return "index";
+        return "redirect:error";
     }
 
     @GetMapping("/logout")

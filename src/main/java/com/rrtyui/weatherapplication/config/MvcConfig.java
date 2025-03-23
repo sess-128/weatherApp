@@ -34,8 +34,8 @@ public class MvcConfig extends AbstractAnnotationConfigDispatcherServletInitiali
                 new HiddenHttpMethodFilter()).addMappingForUrlPatterns(null, true, "/*");
     }
 
-    @Override
-    protected Filter[] getServletFilters() {
-        return new Filter[]{new DelegatingFilterProxy("authFilter")};
-    }
+//    @Override
+//    protected Filter[] getServletFilters() {
+//        return new Filter[]{new DelegatingFilterProxy("authFilter")};
+//    }
 }

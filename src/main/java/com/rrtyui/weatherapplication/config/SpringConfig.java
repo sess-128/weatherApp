@@ -1,14 +1,13 @@
 package com.rrtyui.weatherapplication.config;
 
-import com.rrtyui.weatherapplication.filter.AuthFilter;
-import com.rrtyui.weatherapplication.service.SessionService;
+import com.rrtyui.weatherapplication.filter.SessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ViewResolverRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import org.thymeleaf.spring6.SpringTemplateEngine;
@@ -52,9 +51,23 @@ public class SpringConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public AuthFilter authFilter(SessionService sessionService) {
-        return new AuthFilter(sessionService);
+    SessionManager getSessionManager() {
+        return new SessionManager();
     }
+
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(getSessionManager())
+                .addPathPatterns("/**")
+                .excludePathPatterns("/resources/**", "/sign-up", "sign-in");
+        // assuming you put your serve your static files with /resources/ mapping
+        // and the pre login page is served with /login mapping
+    }
+
+//    @Bean
+//    public AuthFilter authFilter(SessionService sessionService) {
+//        return new AuthFilter(sessionService);
+//    }
 
 
 }

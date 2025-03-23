@@ -3,8 +3,6 @@ package com.rrtyui.weatherapplication.service;
 import com.rrtyui.weatherapplication.dao.SessionDao;
 import com.rrtyui.weatherapplication.entity.CustomSession;
 import com.rrtyui.weatherapplication.entity.User;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,26 +31,19 @@ public class SessionService {
         return sessionDao.save(customSession);
     }
 
-    public CustomSession findByUUID(String uuid) {
-
-        return sessionDao.findById(uuid).orElseThrow(IllegalArgumentException::new);
+    public Optional<CustomSession> findByUUID(String uuid) {
+        return sessionDao.findById(uuid);
     }
 
-    public boolean isSessionValid(String sessionId) {
-        Optional<CustomSession> session = sessionDao.findById(sessionId);
-
-        if (session.isEmpty()) {
-            return false;
-        }
-        CustomSession customSession1 = session.get();
-        LocalDateTime expiresAt = customSession1.getExpiresAt();
-
-        if (isValidTimeEnded(expiresAt)) {
-            sessionDao.delete(customSession1);
-            return false;
-        }
-        return true;
-    }
+//    public boolean isSessionValid(String sessionId) {
+//        LocalDateTime expiresAt = customSession1.getExpiresAt();
+//
+//        if (isValidTimeEnded(expiresAt)) {
+//            sessionDao.delete(customSession1);
+//            return false;
+//        }
+//        return true;
+//    }
 
     public void deleteOldSessions() {
         List<CustomSession> customSessions = sessionDao.findAll();
@@ -61,18 +52,6 @@ public class SessionService {
                 sessionDao.delete(customSession);
             }
         }
-    }
-
-    public Optional<String> findSessionIdInCookies(HttpServletRequest httpServletRequest) {
-        String sessionId = "";
-
-        Cookie[] cookies = httpServletRequest.getCookies();
-        for (Cookie cookie : cookies) {
-            if ("session_id".equals(cookie.getName())) {
-                sessionId = cookie.getValue();
-            }
-        }
-        return Optional.ofNullable(sessionId);
     }
 
     private boolean isValidTimeEnded (LocalDateTime timeToCheck) {

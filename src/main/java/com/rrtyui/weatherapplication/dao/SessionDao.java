@@ -20,7 +20,7 @@ public class SessionDao extends BaseDao<CustomSession>{
     @Transactional
     public Optional<CustomSession> findById (String id) {
         Session session = sessionFactory.getCurrentSession();
-        return Optional.ofNullable(session.get(CustomSession.class, id));
+        return Optional.ofNullable(session.get(CustomSession.class, UUID.fromString(id)));
     }
 
     @Transactional

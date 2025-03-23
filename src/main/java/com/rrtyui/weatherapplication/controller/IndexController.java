@@ -5,6 +5,7 @@ import com.rrtyui.weatherapplication.entity.User;
 import com.rrtyui.weatherapplication.service.CookieService;
 import com.rrtyui.weatherapplication.service.SessionService;
 import com.rrtyui.weatherapplication.service.UserService;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -32,27 +33,33 @@ public class IndexController {
     @GetMapping
     public String index(HttpServletRequest httpServletRequest,
                         Model model) {
+        String sessionIdFromCookies = getSessionIdFromCookies(httpServletRequest);
 
-        String sessionId = httpServletRequest.getHeader("session_id");
+        Optional<CustomSession> customSession = sessionService.findByUUID(sessionIdFromCookies);
+        User user = customSession.get().getUser();
 
-        if (sessionId != null) {
-            Optional<CustomSession> customSession = sessionService.findByUUID(sessionId);
+        model.addAttribute("user", user);
 
-
-            User user = customSession.get().getUser();
-            model.addAttribute("user", user);
-
-            return "index";
-        }
-        return "redirect:error";
+        return "index";
     }
 
     @GetMapping("/logout")
     public String logout() {
-        System.out.println("COOKIE DELETED");
         cookieService.delete();
-        return "error";
+        return "redirect:/";
     }
 
+
+    private String getSessionIdFromCookies(HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("session_id".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
 
 }

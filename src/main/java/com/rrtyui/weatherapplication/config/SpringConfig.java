@@ -60,14 +60,7 @@ public class SpringConfig implements WebMvcConfigurer {
         registry.addInterceptor(getSessionManager())
                 .addPathPatterns("/**")
                 .excludePathPatterns("/resources/**", "/sign-up", "sign-in");
-        // assuming you put your serve your static files with /resources/ mapping
-        // and the pre login page is served with /login mapping
     }
-
-//    @Bean
-//    public AuthFilter authFilter(SessionService sessionService) {
-//        return new AuthFilter(sessionService);
-//    }
 
 
 }

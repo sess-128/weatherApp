@@ -1,10 +1,10 @@
-package com.rrtyui.weatherapplication.controller;
+package com.rrtyui.weatherapplication.controller.auth;
 
 import com.rrtyui.weatherapplication.entity.CustomSession;
 import com.rrtyui.weatherapplication.entity.User;
-import com.rrtyui.weatherapplication.service.CookieService;
-import com.rrtyui.weatherapplication.service.SessionService;
-import com.rrtyui.weatherapplication.service.UserService;
+import com.rrtyui.weatherapplication.service.auth.CookieService;
+import com.rrtyui.weatherapplication.service.auth.SessionService;
+import com.rrtyui.weatherapplication.service.auth.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.mindrot.jbcrypt.BCrypt;

@@ -1,10 +1,11 @@
-package com.rrtyui.weatherapplication.controller;
+package com.rrtyui.weatherapplication.controller.auth;
 
+import com.rrtyui.weatherapplication.dto.LocationSearchDto;
 import com.rrtyui.weatherapplication.entity.CustomSession;
 import com.rrtyui.weatherapplication.entity.User;
-import com.rrtyui.weatherapplication.service.CookieService;
-import com.rrtyui.weatherapplication.service.SessionService;
-import com.rrtyui.weatherapplication.service.UserService;
+import com.rrtyui.weatherapplication.service.auth.CookieService;
+import com.rrtyui.weatherapplication.service.auth.SessionService;
+import com.rrtyui.weatherapplication.service.auth.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +39,10 @@ public class IndexController {
         Optional<CustomSession> customSession = sessionService.findByUUID(sessionIdFromCookies);
         User user = customSession.get().getUser();
 
+        LocationSearchDto searchDto = new LocationSearchDto();
+
         model.addAttribute("user", user);
+        model.addAttribute("city", searchDto);
 
         return "index";
     }

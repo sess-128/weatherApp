@@ -1,4 +1,4 @@
-package com.rrtyui.weatherapplication.service;
+package com.rrtyui.weatherapplication.service.auth;
 
 import com.rrtyui.weatherapplication.entity.CustomSession;
 import jakarta.servlet.http.Cookie;
